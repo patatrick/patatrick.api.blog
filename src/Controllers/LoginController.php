@@ -4,7 +4,6 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 class LoginController
 {
-	private string $userName = "";
 	private string $route_url_index;
 	private string $route_url_login;
 	private string $route_url_callback;
@@ -14,7 +13,7 @@ class LoginController
 		$this->route_url_index = rtrim($_ENV['AUTH0_BASE_URL'], '/');
 		$this->route_url_login = $this->route_url_index . '/login';
 		$this->route_url_callback = $this->route_url_index . '/login/callback';
-		$this->route_url_logout = $this->route_url_index . '/login/logout';
+		$this->route_url_logout = $this->route_url_login;
 	}
 	public function Index(Request $request, Response $response, array $getData) : Response
 	{
@@ -49,7 +48,7 @@ class LoginController
 		try
 		{
 			$auth0 = $this->getAuth0();
-			header("Location: " . $auth0->logout($this->route_url_login));
+			header("Location: " . $auth0->logout($this->route_url_logout));
 			exit;
 		}
 		catch (\Throwable $th) {
@@ -67,19 +66,10 @@ class LoginController
 		]);
 		return $auth0;
 	}
-	private function CheckSession()
+	public function CheckSession()
 	{
-		$auth0 = new \Auth0\SDK\Auth0(configuration: [
-			'domain' => $_ENV['AUTH0_DOMAIN'],
-			'clientId' => $_ENV['AUTH0_CLIENT_ID'],
-			'clientSecret' => $_ENV['AUTH0_CLIENT_SECRET'],
-			'cookieSecret' => $_ENV['AUTH0_COOKIE_SECRET']
-		]);
+		$auth0 = $this->getAuth0();
 		$session = $auth0->getCredentials();
-		if ($session === null) {
-			return false;
-		}
-		$this->userName = $session->user['name'] ?? $session->user['nickname'] ?? $session->user['email'] ?? 'Unknown';
-		return true;
+		// $session === null ? $this->Logout() : true;
 	}
 }

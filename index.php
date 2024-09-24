@@ -42,6 +42,7 @@ $app->group('/login', function (RouteCollectorProxy $group)
 	$group->get('', [LoginController::class, "Index"]);
 	$group->get('/callback', [LoginController::class, "Callback"]);
 	$group->get('/logout', [LoginController::class, "Logout"]);
+	$group->get('/check', [LoginController::class, "CheckSession"]);
 });
 
 
