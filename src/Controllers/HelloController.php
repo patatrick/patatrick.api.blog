@@ -13,7 +13,7 @@ class HelloController
             return $response;
         }
         catch (\Throwable $th) {
-            $response->getBody()->write($th->getMessage()." in line ".$th->getLine());
+            $response->getBody()->write($th->getMessage()." on line ".$th->getLine());
             return $response->withStatus(500);
         }
     }
