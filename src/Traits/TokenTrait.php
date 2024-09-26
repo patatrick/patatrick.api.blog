@@ -3,7 +3,6 @@ namespace App\Traits;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use App\Config;
 trait TokenTrait
 {
 	public function GenerateJWT($playLoad, $noExpire = false) : string
