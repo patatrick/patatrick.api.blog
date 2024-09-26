@@ -3,6 +3,7 @@
 .config
 *.config
 vendor
+tests/
 
 # Visual Studio Code
 .vscode

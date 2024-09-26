@@ -1,4 +1,5 @@
 <?php
+namespace App\Models;
 class Hashtag
 {
 	public int $id = 0; #INT(11) NOT NULL AUTO_INCREMENT,
