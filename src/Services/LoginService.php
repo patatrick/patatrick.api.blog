@@ -6,6 +6,8 @@ use App\Models\Auth0User;
 
 class LoginService extends MySqlService
 {
+	public int $id = 0;
+	public string $type = "";
 	public string $error = "";
 	public function Loguear(Auth0User $auth0User) : bool
 	{

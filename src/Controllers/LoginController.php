@@ -1,10 +1,12 @@
 <?php 
 namespace App\Controllers;
+use App\Entities\Playload;
+use App\Helpers\TokenJWT;
 use App\Models\Auth0User;
 use App\Services\LoginService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
-final class LoginController
+final class LoginController extends TokenJWT
 {
 	private string $route_url_index;
 	private string $route_url_login;
@@ -67,14 +69,16 @@ final class LoginController
 				]));
 				return $response;
 			}
-			else {
-				$response->withStatus(500)->getBody()->write(json_encode([
-					"status"=> 500,
-					"message"=> $this->_loginService->error,
-				]));
-				// $response->getBody()->write(json_encode($auth0User));
-				return $response;
-			}
+			$playload = new Playload();
+			$playload->id = ;
+			$playload->type = 
+			$response->getBody()->write(json_encode([
+				"status"=> 200,
+				"data"=> "",
+				"token"=> $this->GenerateJWT(),
+			]));
+			// $response->getBody()->write(json_encode($auth0User));
+			return $response;
 		}
 		catch (\Throwable $th) {
 			$response->getBody()->write(json_encode([

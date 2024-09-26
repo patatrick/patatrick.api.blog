@@ -8,7 +8,7 @@ Class TokenJWT
 {
 	public JsonResponse $errObj = new JsonResponse();
 	public bool $noExpire = false;
-	public function Generate(Playload $playLoad) : string
+	public function GenerateJWT(Playload $playLoad) : string
 	{
 		try
 		{
@@ -30,7 +30,7 @@ Class TokenJWT
 		if ($this->errObj->status == 401) {
 			return "";
 		}
-		return $this->Generate($playLoad);
+		return $this->GenerateJWT($playLoad);
 	}
 	public function getPlayLoad(string $headerLine) : Playload
 	{
