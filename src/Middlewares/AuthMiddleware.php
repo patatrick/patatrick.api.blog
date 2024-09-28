@@ -8,19 +8,15 @@ class AuthMiddleware extends TokenJWT
 {
 	public function __invoke(Request $request, RequestHandler $handler): Response
 	{
+		$response = new Response();
 		try
 		{
-			$response = new Response();
-			if ($this->UpdateJWT($request->getHeaderLine('Authorization')) == "") {
-				$response->getBody()->write(json_encode($this->errObj));
-				return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
-			}
+			$this->UpdateJWT($request->getHeaderLine('Authorization'));
 			return $handler->handle($request);
 		}
 		catch (\Throwable $e) {
-			echo json_encode([ "status"=> 500, "message"=> $e->getMessage()." ".$e->getFile()." on line ".$e->getLine() ]);
-			http_response_code(500);
-			die();
+			$response->getBody()->write(json_encode(["status"=> 401, "message"=> $e->getMessage()]));
+			return $response->withStatus(401)->withHeader('Content-Type', 'application/json');
 		}
 	}
 }

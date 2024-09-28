@@ -62,22 +62,16 @@ final class LoginController extends TokenJWT
 				]));
 				return $response;
 			}
-			if (!$this->_loginService->Loguear($auth0User)) {
-				$response->withStatus(500)->getBody()->write(json_encode([
-					"status"=> 500,
-					"message"=> $this->_loginService->error,
-				]));
-				return $response;
-			}
+			$userLogin = $this->_loginService->Loguear($auth0User, "US" );
 			$playload = new Playload();
-			$playload->id = ;
-			$playload->type = 
+			$playload->id = $userLogin->id;
+			$playload->type = $userLogin->type;
+			$this->noExpire = true;
 			$response->getBody()->write(json_encode([
 				"status"=> 200,
-				"data"=> "",
-				"token"=> $this->GenerateJWT(),
+				"data"=> $userLogin,
+				"token"=> $this->GenerateJWT($playload),
 			]));
-			// $response->getBody()->write(json_encode($auth0User));
 			return $response;
 		}
 		catch (\Throwable $th) {

@@ -1,12 +1,10 @@
 <?php
 namespace App\Helpers;
-use App\Entities\JsonResponse;
 use App\Entities\Playload;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 Class TokenJWT
 {
-	public JsonResponse $errObj = new JsonResponse();
 	public bool $noExpire = false;
 	public function GenerateJWT(Playload $playLoad) : string
 	{
@@ -18,18 +16,13 @@ Class TokenJWT
 			return JWT::encode((array) $playLoad, $_ENV["TOKEN_KEY"], "HS256");
 		}
 		catch (\Throwable $e) {
-			echo json_encode([ "status"=> 500, "message"=> $e->getMessage()." ".$e->getFile()." on line ".$e->getLine() ]);
-			http_response_code(500);
-			die();
+			throw new \Exception("Error TokenJWT". $e->getMessage());
 		}
 	}
 	public function UpdateJWT(string $headerLine) : string
 	{
 		$token = trim(str_replace("Bearer ", "", $headerLine));
 		$playLoad = $this->DecodeJWT($token);
-		if ($this->errObj->status == 401) {
-			return "";
-		}
 		return $this->GenerateJWT($playLoad);
 	}
 	public function getPlayLoad(string $headerLine) : Playload
@@ -46,14 +39,10 @@ Class TokenJWT
 			return new Playload();
 		}
 		catch (\Firebase\JWT\ExpiredException $e) {
-			$this->errObj->status = 401;
-			$this->errObj->message = "Token expirado";
-			return new Playload();
+			throw new \Exception("Token expirado");
 		}
 		catch (\Throwable $e) {
-			echo json_encode([ "status"=> 500, "message"=> $e->getMessage()." ".$e->getFile()." on line ".$e->getLine() ]);
-			http_response_code(500);
-			die();
+			throw new \Exception("Error TokenJWT". $e->getMessage());
 		}
 	}
 }
