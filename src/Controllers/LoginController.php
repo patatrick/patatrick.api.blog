@@ -8,13 +8,14 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 final class LoginController extends TokenJWT
 {
-	private string $route_url_index;
-	private string $route_url_login;
-	private string $route_url_callback;
-	private string $route_url_logout;
-	public readonly LoginService $_loginService = new LoginService();
-	function __construct()
+	private readonly string $route_url_index;
+	private readonly string $route_url_login;
+	private readonly string $route_url_callback;
+	private readonly string $route_url_logout;
+	public readonly LoginService $serviceLogin;
+	public function __construct()
 	{
+		$this->serviceLogin = new LoginService();
 		$this->route_url_index = rtrim($_ENV['AUTH0_BASE_URL'], '/');
 		$this->route_url_login = $this->route_url_index . '/login';
 		$this->route_url_callback = $this->route_url_index . '/login/callback';
@@ -33,7 +34,7 @@ final class LoginController extends TokenJWT
 		}
 		catch (\Throwable $th) {
 			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage(). " on line " .$th->getLine()
+				"status"=> 500, "message"=> $th->getMessage()
 			]));
 			$response->withStatus(500);
 			return $response;
@@ -62,7 +63,7 @@ final class LoginController extends TokenJWT
 				]));
 				return $response;
 			}
-			$userLogin = $this->_loginService->Loguear($auth0User, "US" );
+			$userLogin = $this->serviceLogin->Loguear($auth0User);
 			$playload = new Playload();
 			$playload->id = $userLogin->id;
 			$playload->type = $userLogin->type;
@@ -76,7 +77,7 @@ final class LoginController extends TokenJWT
 		}
 		catch (\Throwable $th) {
 			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage(). " on line " .$th->getLine()
+				"status"=> 500, "message"=> $th->getMessage()
 			]));
 			$response->withStatus(500);
 			return $response;
@@ -92,7 +93,7 @@ final class LoginController extends TokenJWT
 		}
 		catch (\Throwable $th) {
 			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage(). " on line " .$th->getLine()
+				"status"=> 500, "message"=> $th->getMessage()
 			]));
 			$response->withStatus(500);
 			return $response;

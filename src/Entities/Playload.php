@@ -1,8 +1,16 @@
 <?php
 namespace App\Entities;
+
 class Playload
 {
-	public int $id = 0;
-	public string $type = "";
-	public int $exp = time() + $_ENV["TOKEN_EXP"];
+	public int $id;
+	public string $type;
+	public int $exp;
+
+	public function __construct()
+	{
+		$this->id = 0;
+		$this->type = "";
+		$this->exp = time() + $_ENV["TOKEN_EXP"];
+	}
 }

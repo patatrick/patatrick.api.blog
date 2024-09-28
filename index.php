@@ -23,7 +23,7 @@ use App\Controllers\LoginController;
 
 $app = AppFactory::create();
 if (PRODUCTION === false) {
-	$app->setBasePath("/patatrick.api.blog");
+	$app->setBasePath(basePath: "/patatrick.api.blog");
 	$app->addErrorMiddleware(true, true, true);
 }
 else {

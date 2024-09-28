@@ -16,7 +16,7 @@ Class TokenJWT
 			return JWT::encode((array) $playLoad, $_ENV["TOKEN_KEY"], "HS256");
 		}
 		catch (\Throwable $e) {
-			throw new \Exception("Error TokenJWT". $e->getMessage());
+            throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
 		}
 	}
 	public function UpdateJWT(string $headerLine) : string
@@ -42,7 +42,7 @@ Class TokenJWT
 			throw new \Exception("Token expirado");
 		}
 		catch (\Throwable $e) {
-			throw new \Exception("Error TokenJWT". $e->getMessage());
+            throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
 		}
 	}
 }
