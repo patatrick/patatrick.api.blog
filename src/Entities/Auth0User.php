@@ -1,5 +1,5 @@
 <?php
-namespace App\Models;
+namespace App\Entities;
 class Auth0User
 {
 	public string $nickname = "";

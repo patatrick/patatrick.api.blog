@@ -2,7 +2,8 @@
 namespace App\Controllers;
 use App\Entities\Playload;
 use App\Helpers\TokenJWT;
-use App\Models\Auth0User;
+use App\Entities\Auth0User;
+use App\Models\User;
 use App\Services\LoginService;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -12,10 +13,10 @@ final class LoginController extends TokenJWT
 	private readonly string $route_url_login;
 	private readonly string $route_url_callback;
 	private readonly string $route_url_logout;
-	public readonly LoginService $serviceLogin;
+	private readonly LoginService $callLoginService;
 	public function __construct()
 	{
-		$this->serviceLogin = new LoginService();
+		$this->callLoginService = new LoginService();
 		$this->route_url_index = rtrim($_ENV['AUTH0_BASE_URL'], '/');
 		$this->route_url_login = $this->route_url_index . '/login';
 		$this->route_url_callback = $this->route_url_index . '/login/callback';
@@ -46,13 +47,7 @@ final class LoginController extends TokenJWT
 		{
 			$auth0 = $this->getAuth0();
 			$auth0->exchange($this->route_url_callback);
-			$user = $auth0->getUser();
-			$auth0User = new Auth0User();
-			$auth0User->name = $user["name"];
-			$auth0User->picture = $user["picture"];
-			$auth0User->email = $user["email"];
-			$auth0User->email_verified = (bool) $user["email_verified"];
-			$auth0User->sub = $user["sub"];
+			$auth0User = $this->getAuth0User($auth0->getUser());
 			if ($auth0User->email_verified === false)
 			{
 				$auth0->clear();
@@ -63,15 +58,12 @@ final class LoginController extends TokenJWT
 				]));
 				return $response;
 			}
-			$userLogin = $this->serviceLogin->Loguear($auth0User);
-			$playload = new Playload();
-			$playload->id = $userLogin->id;
-			$playload->type = $userLogin->type;
-			$this->noExpire = true;
+			$userLogin = $this->callLoginService->Loguear($auth0User);
+			$playLoad = $this->CreatePlayload($userLogin);
 			$response->getBody()->write(json_encode([
 				"status"=> 200,
 				"data"=> $userLogin,
-				"token"=> $this->GenerateJWT($playload),
+				"token"=> $this->GenerateJWT($playLoad),
 			]));
 			return $response;
 		}
@@ -108,5 +100,23 @@ final class LoginController extends TokenJWT
 			'cookieSecret' => $_ENV['AUTH0_COOKIE_SECRET']
 		]);
 		return $auth0;
+	}
+	private function getAuth0User(array $auth0Arr) : Auth0User
+	{
+		$auth0User = new Auth0User();
+		$auth0User->name = $auth0Arr["name"];
+		$auth0User->picture = $auth0Arr["picture"];
+		$auth0User->email = $auth0Arr["email"];
+		$auth0User->email_verified = (bool) $auth0Arr["email_verified"];
+		$auth0User->sub = $auth0Arr["sub"];
+		return $auth0User;
+	}
+	private function CreatePlayload(User $userLogin) : Playload
+	{
+		$playload = new Playload();
+		$playload->id = $userLogin->id;
+		$playload->type = $userLogin->type;
+		$this->noExpire = true;
+		return $playload;
 	}
 }

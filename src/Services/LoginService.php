@@ -1,7 +1,7 @@
 <?php 
 namespace App\Services;
 use App\Services\MySqlService;
-use App\Models\Auth0User;
+use App\Entities\Auth0User;
 use App\Models\User;
 
 use \PDO;
