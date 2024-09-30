@@ -1,25 +1,39 @@
 <?php 
 namespace App\Services;
-use App\Models\Entried;
+use App\DTO\EntriedDTO;
 use App\Models\User;
 use App\Services\MySqlService;
 
-use EntriedDTO;
 use \PDO;
 class EntriedService extends MySqlService
 {
 	/**
 	 * Retorna un array de las entradas del blog.
-	 * @return Entried[]
+	 * @return EntriedDTO[]
 	 */
 	public function GetAll()
 	{
 		$db = $this->Connect();
 		try {
-			$prepare =  "SELECT id, title, description, cover_image, slug, joined FROM entried";
-			$stmt = $db->prepare($prepare);
+			$stmt = $db->prepare("
+				SELECT
+					e.id,
+					e.title,
+					e.description,
+					e.cover_image,
+					e.slug,
+					e.joined,
+					e.id_user,
+					u.name,
+					u.avatar,
+					u.occupation
+				FROM
+					entried e
+					INNER JOIN users u ON e.id_user = u.id
+			");
 			$stmt->execute();
-			return $stmt->fetchAll(PDO::FETCH_CLASS, Entried::class);
+			$data = $stmt->fetchAll(PDO::FETCH_CLASS, EntriedDTO::class);
+			return $data;
 		}
 		catch (\PDOException $e)
 		{
@@ -30,30 +44,32 @@ class EntriedService extends MySqlService
 		}
 	}
 	/**
-	 * Retorna la entrada asociada al id.
+	 * Retorna la entrada asociada al Slug.
 	 */
-	public function GetOne(int $id): EntriedDTO
+	public function GetOne(string $slug): EntriedDTO
 	{
 		$db = $this->Connect();
-		$db->beginTransaction();
 		try {
-			$stmt = $db->prepare("SELECT * FROM entried WHERE id = :id");
-			$stmt->bindParam(":id", $id, PDO::PARAM_INT);
+			$stmt = $db->prepare("
+				SELECT
+					e.*,
+					u.name,
+					u.descrption,
+					u.avatar,
+					u.occupation
+				FROM
+					entried e
+					INNER JOIN users u ON e.id_user = u.id
+				WHERE
+					e.slug = :slug
+			");
+			$stmt->bindParam(":slug", $slug, PDO::PARAM_STR);
 			$stmt->execute();
-			$entrada = $stmt->fetchObject(Entried::class);
-			
-			$stmt = $db->prepare("SELECT * FROM users WHERE id = :id_user");
-			$stmt->bindParam(":id_user", $entrada->id_user, PDO::PARAM_INT);
-			$stmt->execute();
-			$usuario = $stmt->fetchObject(User::class);
-			$db->commit();
-
-			
-			return $data != false ? $data : new Entried();
+			$data = $stmt->fetchObject(EntriedDTO::class);
+			return $data != false ? $data : new EntriedDTO();
 		}
 		catch (\PDOException $e)
 		{
-			$db->rollBack();
 			throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
 		}
 		finally {

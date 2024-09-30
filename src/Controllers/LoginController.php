@@ -1,22 +1,22 @@
 <?php 
 namespace App\Controllers;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Entities\Playload;
 use App\Helpers\TokenJWT;
 use App\Entities\Auth0User;
 use App\Models\User;
 use App\Services\LoginService;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
-final class LoginController extends TokenJWT
+final class LoginController
 {
 	private readonly string $route_url_index;
 	private readonly string $route_url_login;
 	private readonly string $route_url_callback;
 	private readonly string $route_url_logout;
-	private readonly LoginService $callLoginService;
+	private readonly LoginService $CallLoginService;
 	public function __construct()
 	{
-		$this->callLoginService = new LoginService();
+		$this->CallLoginService = new LoginService();
 		$this->route_url_index = rtrim($_ENV['AUTH0_BASE_URL'], '/');
 		$this->route_url_login = $this->route_url_index . '/login';
 		$this->route_url_callback = $this->route_url_index . '/login/callback';
@@ -58,12 +58,12 @@ final class LoginController extends TokenJWT
 				]));
 				return $response;
 			}
-			$userLogin = $this->callLoginService->Loguear($auth0User);
+			$userLogin = $this->CallLoginService->Loguear($auth0User);
 			$playLoad = $this->CreatePlayload($userLogin);
 			$response->getBody()->write(json_encode([
 				"status"=> 200,
 				"data"=> $userLogin,
-				"token"=> $this->GenerateJWT($playLoad),
+				"token"=> TokenJWT::GenerateJWT($playLoad, true),
 			]));
 			return $response;
 		}
