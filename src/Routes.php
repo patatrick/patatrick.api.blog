@@ -28,6 +28,9 @@ final class Routes
 		{
 			$group->get('', [EntriedController::class, "GetAll"]);
 			$group->get('/slug/{slug}', [EntriedController::class, "GetOne"]);
+			$group->post('', [EntriedController::class, "Insert"])->add(new AuthMiddleware);
+			$group->put('', [EntriedController::class, "Update"])->add(new AuthMiddleware);
+			$group->delete('', [EntriedController::class, "Delete"])->add(new AuthMiddleware);
 		});
 	}
 }

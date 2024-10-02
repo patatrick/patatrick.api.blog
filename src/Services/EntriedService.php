@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services;
 use App\DTO\EntriedDTO;
+use App\Models\Entried;
 use App\Models\User;
 use App\Services\MySqlService;
 
@@ -67,6 +68,88 @@ class EntriedService extends MySqlService
 			$stmt->execute();
 			$data = $stmt->fetchObject(EntriedDTO::class);
 			return $data != false ? $data : new EntriedDTO();
+		}
+		catch (\PDOException $e)
+		{
+			throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
+		}
+		finally {
+			$db = null;
+		}
+	}
+	/**
+	 * Retorna el id de la entrada creada.
+	 */
+	public function Insert(Entried $entried): int
+	{
+		$db = $this->Connect();
+		try {
+			$stmt = $db->prepare("
+				INSERT INTO entried (title, description, cover_image, slug, content, id_user)
+				VALUES(:title, :description, :cover_image, :slug, :content, :id_user)
+			");
+			$stmt->bindParam(":title", $entried->title, PDO::PARAM_STR);
+			$stmt->bindParam(":description", $entried->description, PDO::PARAM_STR);
+			$stmt->bindParam(":cover_image", $entried->cover_image, PDO::PARAM_STR);
+			$stmt->bindParam(":slug", $entried->slug, PDO::PARAM_STR);
+			$stmt->bindParam(":content", $entried->content, PDO::PARAM_STR);
+			$stmt->bindParam(":id_user", $entried->id_user, PDO::PARAM_INT);
+			$stmt->execute();
+			return $db->lastInsertId();
+		}
+		catch (\PDOException $e)
+		{
+			throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
+		}
+		finally {
+			$db = null;
+		}
+	}
+	/**
+	 * Retorna True o False en la actualización
+	 */
+	public function Update(Entried $entried): bool
+	{
+		$db = $this->Connect();
+		try {
+			$stmt = $db->prepare("
+				UPDATE entried SET
+				title = :title
+				,description = :description
+				,cover_image = :cover_image
+				,slug = :slug
+				,content = :content
+				WHERE id = :id
+			");
+			$stmt->bindParam(":title", $entried->title, PDO::PARAM_STR);
+			$stmt->bindParam(":description", $entried->description, PDO::PARAM_STR);
+			$stmt->bindParam(":cover_image", $entried->cover_image, PDO::PARAM_STR);
+			$stmt->bindParam(":slug", $entried->slug, PDO::PARAM_STR);
+			$stmt->bindParam(":content", $entried->content, PDO::PARAM_STR);
+			$stmt->bindParam(":id", $entried->id, PDO::PARAM_INT);
+			$stmt->execute();
+			return $stmt->rowCount() ? true : false;
+		}
+		catch (\PDOException $e)
+		{
+			throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
+		}
+		finally {
+			$db = null;
+		}
+	}
+	/**
+	 * Retorna True o False en la eliminación
+	 */
+	public function Delete(int $id_entried, int $id_user): bool
+	{
+		$db = $this->Connect();
+		try {
+			$stmt = $db->prepare("DELETE FROM entried WHERE id = :id AND id_user = :id_user");
+			$stmt->bindParam(":id", $id, PDO::PARAM_INT);
+			$stmt->bindParam(":id_user", $id_user, PDO::PARAM_INT);
+			$stmt->execute();
+			return $stmt->rowCount() ? true : false;
 		}
 		catch (\PDOException $e)
 		{

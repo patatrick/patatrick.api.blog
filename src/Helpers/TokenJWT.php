@@ -19,12 +19,22 @@ class TokenJWT
 			throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
 		}
 	}
+    /**
+     * Actualiza el token actual
+     * @param string $headerLine $request->getHeaderLine("Authorization")
+     * @return string
+     */
 	public static function UpdateJWT(string $headerLine) : string
 	{
 		$token = trim(str_replace("Bearer ", "", $headerLine));
 		$playLoad = self::DecodeJWT($token);
 		return self::GenerateJWT($playLoad);
 	}
+        /**
+     * Obtiene los parámetros del token (Playload)
+     * @param string $headerLine $request->getHeaderLine("Authorization")
+     * @return string
+     */
 	public static function getPlayLoad(string $headerLine) : Playload
 	{
 		$token = trim(str_replace("Bearer ", "", $headerLine));

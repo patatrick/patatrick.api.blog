@@ -3,7 +3,7 @@ namespace App\Entities;
 
 class Playload
 {
-	public int $id;
+	public int $id_user;
 	public string $type;
 	public int $exp;
 
