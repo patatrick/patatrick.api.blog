@@ -2,7 +2,6 @@
 namespace App\Controllers;
 use App\DTO\EntriedDTO;
 use App\Helpers\TokenJWT;
-use App\Models\Entried;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Services\EntriedService;
@@ -39,9 +38,6 @@ final class EntriedController
 		try
 		{
 			$slug = trim($getData["slug"]);
-			if ($slug == 1) {
-				throw new HttpBadRequestException($request, "Slug incorrecto");
-			}
 			$entrada = $this->CallEntriedService->GetOne($slug);
 			$response->getBody()->write(json_encode([
 				"status" => 200,
@@ -64,7 +60,7 @@ final class EntriedController
 		try
 		{
 			$params = $request->getParsedBody();
-			$entried = new Entried();
+			$entried = new EntriedDTO();
 			$entried->title = trim($params["title"]);
 			$entried->description = trim($params["description"]);
 			$entried->cover_image = trim($params["cover_image"]);
@@ -101,7 +97,7 @@ final class EntriedController
 		try
 		{
 			$params = $request->getParsedBody();
-			$entried = new Entried();
+			$entried = new EntriedDTO();
 			$entried->title = trim($params["title"]);
 			$entried->description = trim($params["description"]);
 			$entried->cover_image = trim($params["cover_image"]);
