@@ -24,18 +24,20 @@ const PRODUCTION = false;
 
 # Inicio de SlimFramework v4
 	$app = AppFactory::create();
+	$app->addBodyParsingMiddleware();
 	if (PRODUCTION === false) {
 		$app->setBasePath(basePath: "/patatrick.api.blog");
 		$app->addErrorMiddleware(true, true, true);
 	}
 	else {
+		$app->add(new CustomCorsMiddleware());
 		$app->addErrorMiddleware(false, false, false);
 	}
-	$app->addBodyParsingMiddleware();
-	$app->add(new CustomCorsMiddleware());
+
 
 // Carga de rutas
 	Routes::Login($app);
 	Routes::Entried($app);
+	Routes::Menu($app);
 
 $app->run();

@@ -25,12 +25,9 @@ final class EntriedController
 			]));
 			return $response;
 		}
-		catch (\Throwable $th) {
-			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage()
-			]));
-			$response->withStatus(500);
-			return $response;
+		catch (\Throwable $ex) {
+			http_response_code(500);
+			die(json_encode([ "status"=> 500, "message"=> $ex->getMessage() ]));
 		}
 	}
 	public function GetOne(Request $request, Response $response, array $getData) : Response

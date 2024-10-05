@@ -1,5 +1,6 @@
 <?php
 namespace App;
+use App\Controllers\MenuController;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
 
@@ -32,5 +33,9 @@ final class Routes
 			$group->put('', [EntriedController::class, "Update"])->add(new AuthMiddleware);
 			$group->delete('', [EntriedController::class, "Delete"])->add(new AuthMiddleware);
 		});
+	}
+	public static function Menu(App $app): void
+	{
+		$app->get('/menu', [MenuController::class, "GetAll"]);
 	}
 }
