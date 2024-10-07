@@ -5,7 +5,7 @@ use App\Entities\Auth0User;
 use App\Models\User;
 
 use \PDO;
-class LoginService extends MySqlService
+final class LoginService extends MySqlService
 {
 	public function Loguear(Auth0User $auth0User): User
 	{

@@ -5,7 +5,7 @@ use App\Models\EntriedHashtag;
 use App\Services\MySqlService;
 
 use \PDO;
-class EntriedService extends MySqlService
+final class EntriedService extends MySqlService
 {
 	/**
 	 * Retorna un array de las entradas del blog.
@@ -30,6 +30,8 @@ class EntriedService extends MySqlService
 				FROM
 					entried e
 					INNER JOIN users u ON e.id_user = u.id
+				ORDER BY
+					e.id DESC
 			");
 			$stmt->execute();
 			$arrEntriedDTO = $stmt->fetchAll(PDO::FETCH_CLASS, EntriedDTO::class);

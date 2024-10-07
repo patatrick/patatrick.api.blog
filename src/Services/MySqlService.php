@@ -1,7 +1,7 @@
 <?php
 namespace App\Services;
 use \PDO;
-class MySqlService
+abstract class MySqlService
 {
 	protected function Connect()
 	{
