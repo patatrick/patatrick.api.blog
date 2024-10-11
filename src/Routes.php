@@ -1,5 +1,6 @@
 <?php
 namespace App;
+use App\Controllers\HashtagController;
 use App\Controllers\MenuController;
 use Slim\App;
 use Slim\Routing\RouteCollectorProxy;
@@ -37,5 +38,9 @@ final class Routes
 	public static function Menu(App $app): void
 	{
 		$app->get('/menu', [MenuController::class, "GetAll"]);
+	}
+	public static function Hashtag(App $app): void
+	{
+		$app->get('/hashtag', [HashtagController::class, "GetAll"]);
 	}
 }

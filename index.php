@@ -39,5 +39,6 @@ const PRODUCTION = false;
 	Routes::Login($app);
 	Routes::Entried($app);
 	Routes::Menu($app);
+	Routes::Hashtag($app);
 
 $app->run();
