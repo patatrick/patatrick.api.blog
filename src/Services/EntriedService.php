@@ -18,6 +18,7 @@ final class EntriedService extends MySqlService
 			$stmt = $db->prepare("
 				SELECT
 					e.id,
+					e.id_menu,
 					e.title,
 					e.description,
 					e.cover_image,
@@ -105,8 +106,8 @@ final class EntriedService extends MySqlService
 		$db->beginTransaction();
 		try {
 			$stmt = $db->prepare("
-				INSERT INTO entried (title, description, cover_image, slug, content, id_user)
-				VALUES(:title, :description, :cover_image, :slug, :content, :id_user)
+				INSERT INTO entried (title, description, cover_image, slug, content, id_user, id_menu)
+				VALUES(:title, :description, :cover_image, :slug, :content, :id_user, :id_menu)
 			");
 			$stmt->bindParam(":title", $entried->title, PDO::PARAM_STR);
 			$stmt->bindParam(":description", $entried->description, PDO::PARAM_STR);
@@ -114,6 +115,7 @@ final class EntriedService extends MySqlService
 			$stmt->bindParam(":slug", $entried->slug, PDO::PARAM_STR);
 			$stmt->bindParam(":content", $entried->content, PDO::PARAM_STR);
 			$stmt->bindParam(":id_user", $entried->id_user, PDO::PARAM_INT);
+			$stmt->bindParam(":id_menu", $entried->id_menu, PDO::PARAM_INT);
 			$stmt->execute();
 			$idNewEntried = $db->lastInsertId();
 			foreach ($entried->hashtag as $hashtagString) {
@@ -168,6 +170,7 @@ final class EntriedService extends MySqlService
 				,cover_image = :cover_image
 				,slug = :slug
 				,content = :content
+				,id_menu = :id_menu
 				WHERE id = :id
 			");
 			$stmt->bindParam(":title", $entried->title, PDO::PARAM_STR);
@@ -176,6 +179,7 @@ final class EntriedService extends MySqlService
 			$stmt->bindParam(":slug", $entried->slug, PDO::PARAM_STR);
 			$stmt->bindParam(":content", $entried->content, PDO::PARAM_STR);
 			$stmt->bindParam(":id", $entried->id, PDO::PARAM_INT);
+			$stmt->bindParam(":id_menu", $entried->id, PDO::PARAM_INT);
 			$stmt->execute();
 
 			$stmt2 = $db->prepare("DELETE FROM entried_hashtag WHERE id_entried = :id_entried");

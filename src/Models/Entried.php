@@ -3,6 +3,7 @@ namespace App\Models;
 class Entried
 {
 	public int $id = 0; #INT(11) NOT NULL AUTO_INCREMENT,
+	public int $id_menu = 0; #TINYINT NOT NULL,
 	public string $title = ""; #VARCHAR(100) NOT NULL,
 	public string $description = ""; #VARCHAR(512) NOT NULL,
 	public ?string $cover_image = null; #VARCHAR(256) NULL,
