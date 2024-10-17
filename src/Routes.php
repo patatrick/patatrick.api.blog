@@ -29,6 +29,7 @@ final class Routes
 		$app->group('/entried', function (RouteCollectorProxy $group)
 		{
 			$group->get('', [EntriedController::class, "GetAll"]);
+			$group->get('/menu/{menu}', [EntriedController::class, "GetAllMismoTipo"]);
 			$group->get('/slug/{slug}', [EntriedController::class, "GetOne"]);
 			$group->post('', [EntriedController::class, "Insert"])->add(new AuthMiddleware);
 			$group->put('', [EntriedController::class, "Update"])->add(new AuthMiddleware);

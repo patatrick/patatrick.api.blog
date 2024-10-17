@@ -34,7 +34,6 @@ const PRODUCTION = false;
 		$app->addErrorMiddleware(false, false, false);
 	}
 
-
 // Carga de rutas
 	Routes::Login($app);
 	Routes::Entried($app);

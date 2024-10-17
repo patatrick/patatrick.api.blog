@@ -4,6 +4,7 @@
 *.config
 vendor
 tests/
+*.log
 
 # Visual Studio Code
 .vscode

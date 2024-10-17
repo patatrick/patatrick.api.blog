@@ -59,6 +59,60 @@ final class EntriedService extends MySqlService
 		}
 	}
 	/**
+	 * Retorna un array de las entradas del blog de acuerdo al tipo de menú.
+	 * @return EntriedDTO[]
+	 */
+	public function GetAllMismoTipo(int $id_menu)
+	{
+		$db = $this->Connect();
+		try {
+			$stmt = $db->prepare("
+				SELECT
+					e.id,
+					e.id_menu,
+					e.title,
+					e.description,
+					e.cover_image,
+					e.slug,
+					e.joined,
+					e.id_user,
+					u.name,
+					u.avatar,
+					u.occupation
+				FROM
+					entried e
+					INNER JOIN users u ON e.id_user = u.id
+				WHERE
+					e.id_menu = :id_menu
+				ORDER BY
+					e.id DESC
+			");
+			$stmt->bindParam(':id_menu', $id_menu);
+			$stmt->execute();
+			$arrEntriedDTO = $stmt->fetchAll(PDO::FETCH_CLASS, EntriedDTO::class);
+			if (count($arrEntriedDTO)) {
+				$stmt2 = $db->prepare("SELECT * FROM entried_hashtag");
+				$stmt2->execute();
+				$arrHashtag = $stmt2->fetchAll(PDO::FETCH_CLASS, EntriedHashtag::class);
+				$hashtagsByEntried = [];
+				foreach ($arrHashtag as $hashtag) {
+					$hashtagsByEntried[$hashtag->id_entried][] = $hashtag->id_hashtag;
+				}
+				foreach ($arrEntriedDTO as $entry) {
+					$entry->hashtag = $hashtagsByEntried[$entry->id] ?? [];
+				}
+			}
+			return $arrEntriedDTO;
+		}
+		catch (\PDOException $e)
+		{
+			throw new \Exception(basename($e->getFile()). ": ". $e->getMessage(). " on line ". $e->getLine());
+		}
+		finally {
+			$db = null;
+		}
+	}
+	/**
 	 * Retorna la entrada asociada al Slug.
 	 */
 	public function GetOne(string $slug): EntriedDTO
@@ -82,7 +136,10 @@ final class EntriedService extends MySqlService
 			$stmt->execute();
 			$entried = $stmt->fetchObject(EntriedDTO::class);
 			if ($entried) {
-				$stmt2 = $db->prepare("SELECT id_hashtag FROM entried_hashtag WHERE id_entried = :id_entried");
+				$stmt2 = $db->prepare("SELECT name
+										FROM entried_hashtag eh
+										INNER JOIN hashtag h ON eh.id_hashtag = h.id
+										WHERE eh.id_entried = :id_entried");
 				$stmt2->bindParam(":id_entried", $entried->id, PDO::PARAM_INT);
 				$stmt2->execute();
 				$entried->hashtag = array_column($stmt2->fetchAll(PDO::FETCH_NUM), 0);

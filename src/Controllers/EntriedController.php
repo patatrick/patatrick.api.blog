@@ -30,6 +30,23 @@ final class EntriedController
 			die(json_encode([ "status"=> 500, "message"=> $ex->getMessage() ]));
 		}
 	}
+	public function GetAllMismoTipo(Request $request, Response $response, array $getData) : Response
+	{
+		try
+		{
+            $id_menu = (int) $getData["menu"];
+			$entradas = $this->CallEntriedService->GetAllMismoTipo($id_menu);
+			$response->getBody()->write(json_encode([
+				"status" => 200,
+				"data" => $entradas
+			]));
+			return $response;
+		}
+		catch (\Throwable $ex) {
+			http_response_code(500);
+			die(json_encode([ "status"=> 500, "message"=> $ex->getMessage() ]));
+		}
+	}
 	public function GetOne(Request $request, Response $response, array $getData) : Response
 	{
 		try
