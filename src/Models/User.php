@@ -11,4 +11,6 @@ class User
 	public string $auth0_sub = "";  # VARCHAR(100) NOT NULL,
 	public string $type = "";  # CHAR(2) NOT NULL,
 	public ?string $joined = null;  # DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	public ?string $code = null;  # CHAR(45) NULL
+	public ?string $state = null;  # CHAR(32) NULL
 }

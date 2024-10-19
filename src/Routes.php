@@ -22,6 +22,7 @@ final class Routes
 			$group->get('', [LoginController::class, "Index"]);
 			$group->get('/callback', [LoginController::class, "Callback"]);
 			$group->get('/logout', [LoginController::class, "Logout"]);
+			$group->get('/code/{code}/state/{state}', [LoginController::class, "GetUser"]);
 		});
 	}
 	public static function Entried(App $app): void
