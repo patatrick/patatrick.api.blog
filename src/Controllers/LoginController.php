@@ -7,8 +7,6 @@ use App\Helpers\TokenJWT;
 use App\Entities\Auth0User;
 use App\Models\User;
 use App\Services\LoginService;
-use Slim\Exception\HttpBadRequestException;
-use Slim\Exception\HttpException;
 final class LoginController
 {
 	private readonly string $route_url_index;
@@ -29,20 +27,17 @@ final class LoginController
 		try
 		{
 			$auth0 = $this->getAuth0();
-			$auth0->clear();
-			header("Location: ".$auth0->login($this->route_url_callback));
+			if (isset($_GET["logout"])) {
+				header("Location: ".$_ENV['AUTH0_CALLBACK_CLIENT']);
+			}
+			else {
+				header("Location: ".$auth0->login($this->route_url_callback));
+			}
 			exit;
-			// $response->getBody()->write(json_encode([
-			// 	"status"=> 200, "redirect"=> $auth0->login($this->route_url_callback)
-			// ]));
-			// return $response;
 		}
-		catch (\Throwable $th) {
-			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage()
-			]));
-			$response->withStatus(500);
-			return $response;
+		catch (\Throwable $e) {
+			http_response_code(500);
+			die(json_encode([ "status"=> 500, "message"=> $e->getMessage() ]));
 		}
 	}
 	public function Callback(Request $request, Response $response, array $getData) : Response
@@ -63,22 +58,12 @@ final class LoginController
 				return $response;
 			}
 			$this->CallLoginService->Loguear($auth0User);
-			// $userLogin = $this->CallLoginService->Loguear($auth0User);
-			// $playLoad = $this->CreatePlayload($userLogin);
-			// $response->getBody()->write(json_encode([
-				// 	"status"=> 200,
-				// 	"data"=> $userLogin,
-				// 	"token"=> TokenJWT::GenerateJWT($playLoad, true),
-				// ]));
 			header("Location: ".$_ENV['AUTH0_CALLBACK_CLIENT']."?code=".$_GET['code']."&state=".$_GET['state']);
 			exit;
 		}
-		catch (\Throwable $th) {
-			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage()
-			]));
-			$response->withStatus(500);
-			return $response;
+		catch (\Throwable $e) {
+			http_response_code(500);
+			die(json_encode([ "status"=> 500, "message"=> $e->getMessage() ]));
 		}
 	}
 	public function GetUser(Request $request, Response $response, array $getData) : Response
@@ -115,15 +100,13 @@ final class LoginController
 		try
 		{
 			$auth0 = $this->getAuth0();
-			header("Location: " . $auth0->logout($this->route_url_logout));
+			$auth0->clear();
+			header("Location: " . $auth0->logout($this->route_url_logout."?logout=true"));
 			exit;
 		}
-		catch (\Throwable $th) {
-			$response->getBody()->write(json_encode([
-				"status"=> 500, "message"=> $th->getMessage()
-			]));
-			$response->withStatus(500);
-			return $response;
+		catch (\Throwable $e) {
+			http_response_code(500);
+			die(json_encode([ "status"=> 500, "message"=> $e->getMessage() ]));
 		}
 	}
 	private function getAuth0()

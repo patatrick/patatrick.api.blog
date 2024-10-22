@@ -44,7 +44,7 @@ final class LoginService extends MySqlService
 	{
 		try {
             $db = $this->Connect();
-			$prepare = "SELECT * FROM users WHERE code = :code AND state = :state";
+			$prepare = "SELECT *, NULL code, NULL state FROM users WHERE code = :code AND state = :state";
 			$stmt = $db->prepare($prepare);
 			$stmt->bindParam(":code", $code, PDO::PARAM_STR);
 			$stmt->bindParam(":state", $state, PDO::PARAM_STR);
