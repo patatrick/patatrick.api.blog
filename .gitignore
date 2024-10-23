@@ -3,7 +3,8 @@
 .config
 *.config
 vendor
-tests/
+tests/*
+!tests/.gitkeep
 *.log
 
 # Visual Studio Code
