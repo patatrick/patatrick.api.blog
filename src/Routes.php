@@ -1,5 +1,6 @@
 <?php
 namespace App;
+use App\Controllers\ComentarioController;
 use App\Controllers\HashtagController;
 use App\Controllers\MenuController;
 use Slim\App;
@@ -40,6 +41,10 @@ final class Routes
 	public static function Menu(App $app): void
 	{
 		$app->get('/menu', [MenuController::class, "GetAll"]);
+	}
+	public static function Comentarios(App $app): void
+	{
+		$app->get('/comentarios/entrada/{id}', [ComentarioController::class, "GetAllByIdEntried"]);
 	}
 	public static function Hashtag(App $app): void
 	{

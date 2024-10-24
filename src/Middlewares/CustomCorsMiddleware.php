@@ -12,7 +12,7 @@ class CustomCorsMiddleware
 	{
 		try {
 			$corsMiddleware = new CorsMiddleware([
-				"origin" => $_ENV["CORS"],
+				"origin" => explode(",", $_ENV["CORS"]),
 				"methods" => ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
 				"headers.allow" => ["Authorization", "Content-Type"],
 				"headers.expose" => [],
